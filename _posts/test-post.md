@@ -1,6 +1,6 @@
 ---
 title: Test
-date: 2023-06-22 00:22:00 +0200
+date: 2023-06-22 00:22:00
 categories: [testing, testing2]
 tags: [test-tag]
 ---
