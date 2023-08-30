@@ -31,7 +31,7 @@ Now that we know that the site is using Wordpress, we can use WP-Scan to find ot
 * Brute force attacks:
     * Using the XML-RPC API we can bypass the request of the login panel very easily. This is a simple request example of how we would do it
 
-```console
+```HTTP
 POST /xmlrpc.php HTTP/1.1
 Host: example.com
 Content-Length: 235
