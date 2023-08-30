@@ -7,21 +7,23 @@ tags: [tryhackme, oscp, smb]
 # TryHackMe | Relevant Writeup (No Metasploit)
 
 ## Approach
-Because I am looking forward getting the OSCP, I will avoid using automatic exploitation tools such as Metasploit or SQLMap.
+As I am working towards obtaining the OSCP, I will avoid using automatic exploitation tools such as Metasploit or SQLMap.
+<br>
+The difficulty of this machine is <span style="color:limegreen">easy</span>.
 
-As I first look into the page, the only thing I see is an IIS Windows Server image, with nothing else in the code, so we start by doing a port scan with Nmap
+As I first look into the page, the only thing I see is an IIS Windows Server image, with nothing else in the code, so I started by conducting a port scan using Nmap
 
 ```console
 nmap -sC -sV -p- Target_IP -oN relevant.nmap
 ```
 
-At the same time I will be running GoBuster with Seclists' web-content wordlist to find interesting directories.
+Meanwhile, I ran GoBuster with Seclists' web-content wordlist to find interesting directories.
 
 ```console
 gobuster dir -u Target_IP -w /usr/share/wordlists/seclist/Discovery/Web-Content/big.txt
 ```
 
-While GoBuster is running I'll take a look to the nmap result
+While GoBuster was running, I examined the Nmap results
 
 ```console
 Host is up (0.017s latency).
@@ -83,7 +85,7 @@ Host script results:
 |_  message_signing: disabled (dangerous, but default)
 ```
 
-We see the machine is running SMB so let's enumerate it.
+We saw that the machine is running SMB, so let's enumerate it.
 
 ![SMB enum result 1](/assets/posts/relevant/1.png)
 
@@ -95,21 +97,21 @@ There is an interesting file there, we download it so we can have it handy. Let'
 
 ![passwords.txt content](/assets/posts/relevant/3.png)
 
-The file contais two encoded user passwords, and we see that they are encoded using base64 at a glance. We could decode them using the console but i preffer using CyberChef.
+The file contains two encoded user passwords, and we see that they are encoded using base64 at a glance. We could decode them using the console, but I prefer using CyberChef.
 
 ![passwords.txt content decoded](/assets/posts/relevant/4.png)
 
 And here we have it, the passwords for users Bob and Bill.
-After getting these credentials I tried to log in with to SMB and with SSH and it didn't work.
+After obtaining these credentials, I tried to log in to SMB and SSH and it didn't work.
 
 ![psexec 1](/assets/posts/relevant/5.png)
 ![psexec 2](/assets/posts/relevant/6.png)
 
-However, using psexec we can know that the user Bill is not even real, and Bob is but the password is wrong.
-Here comes the only difficulty of this machine; it is a rabbit hole, as it provides you with fake credentials that have no use at all. So what can we do now?
-The GoBuster scan we did at the start didn't file a single directory, so now we can do a couple things: look for vulnerabilities on the services or we can keep enumerating them.
+However, using psexec, we can determine that the user Bill does not even exist, and Bob is but the password is wrong.
+Here comes the only challenge of this machine: it is a rabbit hole, as it provides you with fake credentials that have no use at all. So what can we do now?
+The GoBuster scan we did at the start didn't find a single directory, so now we can do a couple things: look for vulnerabilities in the services or continue enumerating them.
 
-The thing is, both methods can result in compromising the machine, for now I will do the SMB exploitation, because the other options is to use EternalBlue and it's not the objective of this room.
+The thing is, both methods can result in compromising the machine. For now, I will focus on SMB exploitation, because the other options is to use EternalBlue and it's not the objective of this room.
 
 ## SMB Exploitation
 Let's go for the easy one first. We saw that using GoBuster directly on the main page (port 80) didn't get us any results, but we can enumerate the IIS webserver (port 49663).
@@ -128,7 +130,7 @@ Now we have a shell and list the users to get the first flag.
 
 ### Privilege escalation
 First we check for exploitable tokens
-```console
+```bash
 c:\windows\system32\inetsrv>whoami /priv
 whoami /priv
 
