@@ -30,6 +30,7 @@ Now that we know that the site is using Wordpress, we can use WP-Scan to find ot
     * This type of attack leverages the default configuration in order to perform callbacks that can result in **DDoS attacks**, **Cloudflare Protection Bypass** and **XSPA (Cross Site Port Attack)**
 * Brute force attacks:
     * Using the XML-RPC API we can bypass the request of the login panel very easily. This is a simple request example of how we would do it
+    <br>
     ```
     POST /xmlrpc.php HTTP/1.1
     Host: example.com
@@ -83,6 +84,7 @@ It outputs lots of stuff so we must look carefully.
 We found phpMyAdmins' credentials, and we have access to the database but cannot elevate privileges. Also, there is nothing of interest in the database.
 
 I was stuck here for a bit, linpeas was not getting me anything I wanted to see so we must manually check for possible missconfigurations and hidden files. It's always a good practice to look inside /opt when looking for specific files or folders manually, as this is the folder where optional packages or add-ons that are not part of the core operating system are installed.
+<br>
 ![phpmyadmin credentials](/assets/posts/internal/11.png)
 <br>
 We have a folder called containerd and a wp-save.txt file. If we check the wp-save.txt file we get what seems to be the credentials for the user **aubreanna**
@@ -106,7 +108,7 @@ We have the user flag, a snap folder and most importantly a jenkins.txt file, wh
 Internal Jenkins service is running on 172.17.0.2:8080
 ```
 If we stablish an SSH tunnel to this IP and port, we may be able to access Jenkins. 
-```
+```console
 ssh -L 8080:172.17.0.2:8080 aubreanna@internal.thm
 ```
 And now if everything is well set up, we should be able to access the login panel by navigating to **localhost:8080**.
@@ -115,7 +117,9 @@ And now if everything is well set up, we should be able to access the login pane
 
 Since I had already attempted default and common credentials without success, I decided to use Hydra to attempt a brute force attack. This will be my command so you can use it if needed.
 <br>
- ```hydra -l admin -P /usr/share/wordlists/rockyou.txt localhost -s 8080 http-post-form "/j_acegi_security_check:j_username=^USER^&j_password=^PASS^&from=%2F&Submit=Sign+in:Invalid username or password"```
+ ```console
+ hydra -l admin -P /usr/share/wordlists/rockyou.txt localhost -s 8080 http-post-form "/j_acegi_security_check:j_username=^USER^&j_password=^PASS^&from=%2F&Submit=Sign+in:Invalid username or password"
+ ```
 ![Found password](/assets/posts/internal/17.png)
 <br>
 With the password **spongebob**, we can now log in.
