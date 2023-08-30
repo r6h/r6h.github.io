@@ -30,7 +30,7 @@ Now that we know that the site is using Wordpress, we can use WP-Scan to find ot
     * This type of attack leverages the default configuration in order to perform callbacks that can result in **DDoS attacks**, **Cloudflare Protection Bypass** and **XSPA (Cross Site Port Attack)**
 * Brute force attacks:
     * Using the XML-RPC API we can bypass the request of the login panel very easily. This is a simple request example of how we would do it
-```example
+```
 POST /xmlrpc.php HTTP/1.1
 Host: example.com
 Content-Length: 235
