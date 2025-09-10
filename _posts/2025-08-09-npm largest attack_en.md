@@ -4,12 +4,9 @@ categories: [news, malware]
 tags: [blockchain, phishing]
 ---
 
-On September 8th of 2025 the Node Packet Manager suffered the largest supply chain attack in JavaScript's ecosystem history, compromising 18 packets with 2 billion weekly downloads, potentially affecting millions of services that use them as dependencies in their infrastructure.
+On September 8th of 2025 the Node Packet Manager suffered the largest supply chain attack in JavaScript's ecosystem history, compromising 18 packets with over 2 billion weekly downloads, potentially affecting millions of services that use them as dependencies in their infrastructure.
 
 The affected packages were the following:
-
-<details>
-<summary>Affected Packages and Weekly Downloads</summary>
 
 | Package | Weekly Downloads |
 |---------|------------------|
@@ -33,7 +30,6 @@ The affected packages were the following:
 | backslash | 0.26m |
 
 *Note: These figures represent approximate weekly downloads prior to the attack, totaling over 2.6 billion collectively.*
-</details>
 
 # Which was the root of the attack?
 
